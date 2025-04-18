@@ -105,42 +105,25 @@
         <div id="message" class="message">
             <h2>Access granted</h2>
             <p>click to link:</p>
-            <a href="https://discord.gg/hfnt29Qw8w" target="_blank">Click</a>
+            <a href="ВАША_ССЫЛКА_ДЛЯ_ПРИГЛАШЕНИЯ_НА_СЕРВЕР_DISCORD" target="_blank">Click</a>
         </div>
         <div id="error" class="error"></div>
     </div>
 
     <script>
-        const correctPassword = "88995500";
-        const maxAttempts = 30;
-        let attempts = parseInt(localStorage.getItem('attempts')) || 0;
-
-        if (attempts >= maxAttempts) {
-            document.getElementById('error').textContent = 'You have reached the maximum number of attempts.';
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('loginForm').style.display = 'none';
-        }
+        const correctPassword = "вашПароль";
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const passwordInput = document.getElementById('password').value;
 
-            if (attempts < maxAttempts) {
-                if (passwordInput === correctPassword) {
-                    document.getElementById('message').style.display = 'block';
-                    document.getElementById('error').style.display = 'none';
-                } else {
-                    attempts++;
-                    localStorage.setItem('attempts', attempts);
-                    document.getElementById('error').textContent = 'Error getting link: wrong password. Attempts remaining: ' + (maxAttempts - attempts);
-                    document.getElementById('error').style.display = 'block';
-                    document.getElementById('message').style.display = 'none';
-
-                    if (attempts >= maxAttempts) {
-                        document.getElementById('error').textContent = 'You have reached the maximum number of attempts.';
-                        document.getElementById('loginForm').style.display = 'none';
-                    }
-                }
+            if (passwordInput === correctPassword) {
+                document.getElementById('message').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+            } else {
+                document.getElementById('error').textContent = 'Error getting link: wrong password';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('message').style.display = 'none';
             }
         });
     </script>
