@@ -96,6 +96,12 @@
         .captcha-container {
             margin-bottom: 20px;
         }
+
+        .strikethrough {
+            text-decoration: line-through;
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -118,6 +124,10 @@
             <a href="https://discord.com/invite/hfnt29Qw8w" target="_blank">Click</a>
         </div>
         <div id="error" class="error"></div>
+
+        <div class="strikethrough">
+            Этот текст будет зачеркнут.
+        </div>
     </div>
 
     <script>
@@ -175,7 +185,6 @@
             }
         });
 
-        // Инициализация капчи
         drawCaptcha(captchaCode);
     </script>
 </body>
