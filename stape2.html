@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEYSYSTEM - BY KOSTY</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="password"], input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 80%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .message a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .message a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            font-size: 16px;
+            margin-top: 10px;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .captcha-container {
+            margin-bottom: 20px;
+        }
+
+        .strikethrough {
+            text-decoration: line-through;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Key system stape 2/2</h1>
+        <form id="loginForm">
+            <label for="password">password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <div class="captcha-container">
+                <canvas id="captchaCanvas" width="200" height="50"></canvas><br>
+                <input type="text" id="captchaInput" placeholder="Enter the code above" required>
+            </div>
+
+            <button type="submit">Check</button>
+        </form>
+        <div id="message" class="message">
+            <h2>Access granted</h2>
+            <p>click to link:</p>
+            <a href="https://discord.com/invite/hfnt29Qw8w" target="_blank">Click</a>
+        </div>
+        <div id="error" class="error"></div>
+
+        <div class="strikethrough">
+            Этот текст будет зачеркнут.
+        </div>
+    </div>
+
+    <script>
+        const correctPassword = "88995500";
+        let captchaCode = generateCaptchaCode();
+
+        function generateCaptchaCode() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return code;
+        }
+
+        function drawCaptcha(code) {
+            const canvas = document.getElementById('captchaCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '30px Arial';
+            ctx.fillStyle = 'black';
+            ctx.fillText(code, 30, 35);
+
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < 50; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fill();
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const passwordInput = document.getElementById('password').value;
+            const captchaInput = document.getElementById('captchaInput').value;
+
+            if (passwordInput === correctPassword && captchaInput === captchaCode) {
+                document.getElementById('message').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+            } else {
+                document.getElementById('error').textContent = 'Error getting link: wrong password or CAPTCHA';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('message').style.display = 'none';
+                captchaCode = generateCaptchaCode();
+                drawCaptcha(captchaCode);
+            }
+        });
+
+        drawCaptcha(captchaCode);
+    </script>
+</body>
+</html>
