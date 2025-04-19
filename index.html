@@ -39,7 +39,7 @@
             text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
         }
 
-        input[type="password"] {
+        input[type="password"], input[type="text"] {
             width: 80%;
             padding: 10px;
             margin-top: 10px;
@@ -92,6 +92,10 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        .captcha-container {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -100,6 +104,12 @@
         <form id="loginForm">
             <label for="password">password:</label>
             <input type="password" id="password" name="password" required>
+            
+            <div class="captcha-container">
+                <canvas id="captchaCanvas" width="200" height="50"></canvas><br>
+                <input type="text" id="captchaInput" placeholder="Enter the code above" required>
+            </div>
+
             <button type="submit">Check</button>
         </form>
         <div id="message" class="message">
@@ -112,20 +122,61 @@
 
     <script>
         const correctPassword = "88995500";
+        let captchaCode = generateCaptchaCode();
+
+        function generateCaptchaCode() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return code;
+        }
+
+        function drawCaptcha(code) {
+            const canvas = document.getElementById('captchaCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '30px Arial';
+            ctx.fillStyle = 'black';
+            ctx.fillText(code, 30, 35);
+
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < 50; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fill();
+            }
+        }
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const passwordInput = document.getElementById('password').value;
+            const captchaInput = document.getElementById('captchaInput').value;
 
-            if (passwordInput === correctPassword) {
+            if (passwordInput === correctPassword && captchaInput === captchaCode) {
                 document.getElementById('message').style.display = 'block';
                 document.getElementById('error').style.display = 'none';
             } else {
-                document.getElementById('error').textContent = 'Error getting link: wrong password';
+                document.getElementById('error').textContent = 'Error getting link: wrong password or CAPTCHA';
                 document.getElementById('error').style.display = 'block';
                 document.getElementById('message').style.display = 'none';
+                captchaCode = generateCaptchaCode();
+                drawCaptcha(captchaCode);
             }
         });
+
+        // Инициализация капчи
+        drawCaptcha(captchaCode);
     </script>
 </body>
 </html>
